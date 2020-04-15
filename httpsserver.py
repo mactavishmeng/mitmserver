@@ -3,6 +3,7 @@ import requests
 import ssl
 from urllib3.exceptions import InsecureRequestWarning
 import urllib3.util.ssl_
+import time
 
 urllib3.disable_warnings(InsecureRequestWarning)
 urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL'
@@ -12,7 +13,6 @@ proxies={}
 class MyHandler(http.server.BaseHTTPRequestHandler):
     def req(self):
         try:
-
             if isinstance(self.request, ssl.SSLSocket):
                 scheme = "https://"
             else:
@@ -20,14 +20,19 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             # make URL from request
             self.url = scheme + self.headers["host"].strip("\n") + self.path
 
+            # Get body length if has
+            if self.headers.__contains__('Content-Length'):
+                body_len = int(self.headers['Content-Length'])
+            else:
+                body_len = 0
             # Make request
-            req = requests.Request(method=self.command, url=self.url, headers=self.headers)
+            req = requests.Request(method=self.command, url=self.url, headers=self.headers, data=self.rfile.read(body_len))
             s = requests.Session()
             prepped = req.prepare()
 
             # send request via proxy
             r = s.send(prepped, verify=False, proxies=proxies, allow_redirects=False)
-
+            
             # set response headers
             self.send_response(r.status_code)
             for key in r.headers:
@@ -68,5 +73,5 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
         self.req()
 
     def log_request(self, code='-', size='-'):
-        print("[HTTP] Request: (%s) %s" % (code, self.url))
+        print("[%s][HTTP] Request: (%s) %s" % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), code, self.url))
         return True

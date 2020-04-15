@@ -1,6 +1,7 @@
 import socketserver
 import struct
 import socket
+import time
 
 # DNS Query
 class SinDNSQuery:
@@ -44,7 +45,6 @@ class SinDNSFrame:
     def __init__(self, data):
         (self.id, self.flags, self.quests, self.answers, self.author, self.addition) = struct.unpack('>HHHHHH', data[0:12])
         self.query = SinDNSQuery(data[12:])
-        self.hit = "?"
     def getname(self):
         return self.query.name
     def setip(self, ip):
@@ -56,7 +56,7 @@ class SinDNSFrame:
         res = res + self.query.getbytes()
         if self.answers != 0:
             res = res + self.answer.getbytes()
-        print("[DNS%s] Query: %s, Answer: %s" % (self.hit, self.query.name, self.answer.ip))
+        print("[%s][DNS] Query: %s, Answer: %s" % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), self.query.name, self.answer.ip))
         return res
 
 # A UDPHandler to handle DNS query
