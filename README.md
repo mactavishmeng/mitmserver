@@ -13,9 +13,16 @@ MITMServer是一个无需ARP，“安全”的进行中间人攻击测试的小�
 
    `git clone https://github.com/mactavishmeng/mitmserver.git`
 
-2. 打开Burpsuite或Fiddler等代理抓包工具
+2. 安装依赖：
 
-3. 修改配置
+   ```bash
+   cd mitmserver
+   pip install -r requirements.txt
+   ```
+
+3. 打开Burpsuite或Fiddler等代理抓包工具
+
+4. 修改配置
 
    进入`mitmserver`文件夹，修改`mitmserver.json`：
 
@@ -43,13 +50,13 @@ MITMServer是一个无需ARP，“安全”的进行中间人攻击测试的小�
 
    `http_list`:   对外开放的HTTP服务器配置。如果需要解析HTTPS数据，需要配置 ishttps 为 true，且配置证书路径；如果仅需HTTP，则无需填写证书路径
 
-4. 运行脚本
+5. 运行脚本
 
    `python3 mitmserver.py`
 
-5. 修改目标设备的DNS服务器，指向本机的IP（如上图配置中的`192.168.1.3`），如有必要需要清空目标设备的DNS缓存。
+6. 修改目标设备的DNS服务器，指向本机的IP（如上图配置中的`192.168.1.3`），如有必要需要清空目标设备的DNS缓存。
 
-6. 在目标设备上访问`dns_list`列表中的域名，本机代理软件上即可抓包。
+7. 在目标设备上访问`dns_list`列表中的域名，本机代理软件上即可抓包。
 
 ## 运行场景
 
